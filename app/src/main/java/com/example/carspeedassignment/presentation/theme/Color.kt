@@ -1,4 +1,4 @@
-package com.example.carspeedassignment.ui.theme
+package com.example.carspeedassignment.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 
