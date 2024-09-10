@@ -15,15 +15,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.carspeedassignment.domain.entities.Car
+import com.example.carspeedassignment.domain.services.CarSpeedMonitorService
 import com.example.carspeedassignment.presentation.theme.CarSpeedAssignmentTheme
+import com.example.carspeedassignment.presentation.viewmodel.SpeedMonitorViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class MainActivity: ComponentActivity() {
 
     private val speedMonitorViewModel: SpeedMonitorViewModel by viewModels()
 
