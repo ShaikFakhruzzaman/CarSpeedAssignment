@@ -1,8 +1,8 @@
 package com.example.carspeedassignment.presentation
 
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -14,19 +14,39 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.carspeedassignment.domain.entities.Car
 import com.example.carspeedassignment.presentation.theme.CarSpeedAssignmentTheme
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val carViewModel:CarViewModel by viewModels()
+    private val speedMonitorViewModel: SpeedMonitorViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         startForeGService()
 
-        carViewModel.carSpeed.observe(this,  {
-           // update to ui
-        })
+        val car = Car("xyz123", "So-and-So")
+        speedMonitorViewModel.setSpeedLimit(car, 100)
+        speedMonitorViewModel.apply {
+            //LiveData to update Ui
+            currentSpeed.observe(this@MainActivity) { speed ->
+                Log.d("zama", "Current Speed: $speed")
+            }
+
+            //Flow to update Ui
+            CoroutineScope(Dispatchers.IO).launch {
+                currSpeedFlow.collect {
+                    // updates currentSpeed to UI
+                }
+            }
+        }
 
         setContent {
             CarSpeedAssignmentTheme {
@@ -41,15 +61,8 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun startForeGService() {
-        val intent = Intent(this, CarSpeedService::class.java).apply {
-            putExtra("CAR_ID", "car123")
-            putExtra("SPEED_LIMIT", 100.0)
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(intent)
-        } else {
-            startService(intent)
-        }
+        val intent = Intent(this, CarSpeedMonitorService::class.java)
+        startService(intent)
     }
 }
 

@@ -1,3 +1,6 @@
 package com.example.carspeedassignment.domain.entities
 
-data class Car(val id:String, val currentSpeed:Double)
+data class Car(
+    val licensePlate: String,
+    val model: String
+)
